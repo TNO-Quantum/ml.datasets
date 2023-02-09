@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>tno.quantum.ml.datasets._datasets &mdash; tno.quantum.ml.datasets</title>
+      <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../../_static/custom.css" type="text/css" />
+    <link rel="shortcut icon" href="../../../../../_static/TNO_zwart.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../../" id="documentation_options" src="../../../../../_static/documentation_options.js"></script>
+        <script src="../../../../../_static/jquery.js"></script>
+        <script src="../../../../../_static/underscore.js"></script>
+        <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../../../_static/doctools.js"></script>
+        <script src="../../../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            tno.quantum.ml.datasets
+              <img src="../../../../../_static/TNO_wit.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                1.2.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../datasets.html">datasets package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">tno.quantum.ml.datasets</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">tno.quantum.ml.datasets._datasets</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for tno.quantum.ml.datasets._datasets</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;This module contains datasets.</span>
+
+<span class="sd">The datasets in this module can be used to test classifiers and clustering algorithms.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Tuple</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">RandomState</span>
+<span class="kn">from</span> <span class="nn">numpy.typing</span> <span class="kn">import</span> <span class="n">NDArray</span>
+<span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">datasets</span>
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
+
+<span class="c1"># pylint: disable=invalid-name</span>
+
+
+<span class="k">def</span> <span class="nf">_pre_process_data</span><span class="p">(</span>
+    <span class="n">X</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="n">y</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="n">n_features</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">n_classes</span><span class="p">:</span> <span class="nb">int</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Slice `X` and `y` and cast the dtype of `y` to the dtype of `X`.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        X: Feature matrix to slice.</span>
+<span class="sd">        y: Target samples to slice and cast.</span>
+<span class="sd">        n_features: Number of features.</span>
+<span class="sd">        n_classes: Number of classes, must be 1, 2 or 3.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        ``Tuple`` of `X` and `y`, where `X`, and `y` are sliced to have the correct</span>
+<span class="sd">        number of classes and number of features. Furthermore, the datatype of `y` is</span>
+<span class="sd">        set to the datatype of `X`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+    <span class="n">ind</span> <span class="o">=</span> <span class="n">y</span> <span class="o">&lt;</span> <span class="n">n_classes</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">ind</span><span class="p">,</span> <span class="p">:</span><span class="n">n_features</span><span class="p">]</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span>
+
+
+<div class="viewcode-block" id="get_wine_dataset"><a class="viewcode-back" href="../../../../../datasets.html#datasets.get_wine_dataset">[docs]</a><span class="k">def</span> <span class="nf">get_wine_dataset</span><span class="p">(</span>
+    <span class="n">n_features</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">13</span><span class="p">,</span> <span class="n">n_classes</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="n">random_seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">],</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int_</span><span class="p">],</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">],</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int_</span><span class="p">]]:</span>
+    <span class="c1"># pylint: disable=line-too-long</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Load the `wine &lt;https://scikit-learn.org/stable/modules/generated/sklearn.datasets.load_wine&gt;`_ dataset.</span>
+
+<span class="sd">    The dataset is loaded and split into training and validation data, with a ratio of 3</span>
+<span class="sd">    to 1 (75% of the data is training and 25% is validation).</span>
+
+<span class="sd">    Example usage::</span>
+
+<span class="sd">        &gt;&gt;&gt; from tno.quantum.ml.datasets import get_wine_dataset</span>
+<span class="sd">        &gt;&gt;&gt; X_train, y_train, X_val, y_val = get_wine_dataset()</span>
+<span class="sd">        &gt;&gt;&gt; print(f&quot;{X_train.shape=}\n{y_train.shape=}\n{X_val.shape=}\n{y_val.shape=}&quot;)</span>
+<span class="sd">        X_train.shape=(133, 13)</span>
+<span class="sd">        y_train.shape=(133,)</span>
+<span class="sd">        X_val.shape=(45, 13)</span>
+<span class="sd">        y_val.shape=(45,)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        n_features: Number of features. Defaults to 13.</span>
+<span class="sd">        n_classes: Nuber of classes, must be 1, 2 or 3. Defaults to 3.</span>
+<span class="sd">        random_seed: Seed to give to the random number generator. Defaults to 0.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A tuple containing ``X_training``, ``y_training``, ``X_validation`` and</span>
+<span class="sd">        ``y_validation`` of the wine dataset.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># pylint: enable=line-too-long</span>
+    <span class="c1"># Load data and take subset</span>
+    <span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">datasets</span><span class="o">.</span><span class="n">load_wine</span><span class="p">(</span><span class="n">return_X_y</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">_pre_process_data</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">n_features</span><span class="p">,</span> <span class="n">n_classes</span><span class="p">)</span>
+
+    <span class="c1"># Split into training and validation data sets</span>
+    <span class="n">X_train</span><span class="p">,</span> <span class="n">X_val</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_val</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span>
+        <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">random_seed</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">X_val</span><span class="p">,</span> <span class="n">y_val</span></div>
+
+
+<div class="viewcode-block" id="get_iris_dataset"><a class="viewcode-back" href="../../../../../datasets.html#datasets.get_iris_dataset">[docs]</a><span class="k">def</span> <span class="nf">get_iris_dataset</span><span class="p">(</span>
+    <span class="n">n_features</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span> <span class="n">n_classes</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="n">random_seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">],</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int_</span><span class="p">],</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">],</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int_</span><span class="p">]]:</span>
+    <span class="c1"># pylint: disable=line-too-long</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Load the `iris &lt;https://scikit-learn.org/stable/modules/generated/sklearn.datasets.load_iris&gt;`_ dataset.</span>
+
+<span class="sd">    The dataset is loaded and split into training and validation data, with a ratio of 3</span>
+<span class="sd">    to 1 (75% of the data is training and 25% is validation).</span>
+
+<span class="sd">    Example usage:</span>
+
+<span class="sd">        &gt;&gt;&gt; from tno.quantum.ml.datasets import get_iris_dataset</span>
+<span class="sd">        &gt;&gt;&gt; X_train, y_train, X_val, y_val = get_iris_dataset()</span>
+<span class="sd">        &gt;&gt;&gt; print(f&quot;{X_train.shape=}\n{y_train.shape=}\n{X_val.shape=}\n{y_val.shape=}&quot;)</span>
+<span class="sd">        X_train.shape=(112, 4)</span>
+<span class="sd">        y_train.shape=(112,)</span>
+<span class="sd">        X_val.shape=(38, 4)</span>
+<span class="sd">        y_val.shape=(38,)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        n_features: Number of features. Defaults to 4.</span>
+<span class="sd">        n_classes: Nuber of classes, must be 1, 2 or 3. Defaults to 3.</span>
+<span class="sd">        random_seed: Seed to give to the random number generator. Defaults to 0.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A tuple containing ``X_training``, ``y_training``, ``X_validation`` and</span>
+<span class="sd">        ``y_validation`` of the iris dataset.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># pylint: enable=line-too-long</span>
+    <span class="c1"># Load data and take subset</span>
+    <span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">datasets</span><span class="o">.</span><span class="n">load_iris</span><span class="p">(</span><span class="n">return_X_y</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">_pre_process_data</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">n_features</span><span class="p">,</span> <span class="n">n_classes</span><span class="p">)</span>
+
+    <span class="c1"># Split into training and validation data sets</span>
+    <span class="n">X_train</span><span class="p">,</span> <span class="n">X_val</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_val</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span>
+        <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">random_seed</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">X_val</span><span class="p">,</span> <span class="n">y_val</span></div>
+
+
+<div class="viewcode-block" id="get_moons_dataset"><a class="viewcode-back" href="../../../../../datasets.html#datasets.get_moons_dataset">[docs]</a><span class="k">def</span> <span class="nf">get_moons_dataset</span><span class="p">(</span>
+    <span class="n">random_seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">],</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int_</span><span class="p">],</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">],</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int_</span><span class="p">]]:</span>
+    <span class="c1"># pylint: disable=line-too-long</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Generate a random dataset with a moon shape.</span>
+
+<span class="sd">    This function wraps the `make_moons &lt;https://scikit-learn.org/stable/modules/generated/sklearn.datasets.make_moons&gt;`_</span>
+<span class="sd">    method of ``sklearn.datasets`` with a fixed noise factor of 0.3. Furthermore, the</span>
+<span class="sd">    data is split into training and validation data, where 60% of the data is training</span>
+<span class="sd">    and 40% is validation.</span>
+
+<span class="sd">    Example usage:</span>
+
+<span class="sd">        &gt;&gt;&gt; from tno.quantum.ml.datasets import get_moons_dataset</span>
+<span class="sd">        &gt;&gt;&gt; X_train, y_train, X_val, y_val = get_moons_dataset()</span>
+<span class="sd">        &gt;&gt;&gt; print(f&quot;{X_train.shape=}\n{y_train.shape=}\n{X_val.shape=}\n{y_val.shape=}&quot;)</span>
+<span class="sd">        X_train.shape=(60, 2)</span>
+<span class="sd">        y_train.shape=(60,)</span>
+<span class="sd">        X_val.shape=(40, 2)</span>
+<span class="sd">        y_val.shape=(40,)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        random_seed: Seed to give to the random number generator. Defaults to 0.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A tuple containing ``X_training``, ``y_training``, ``X_validation`` and</span>
+<span class="sd">        ``y_validation`` of a moon shaped dataset.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># pylint: enable=line-too-long</span>
+    <span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">datasets</span><span class="o">.</span><span class="n">make_moons</span><span class="p">(</span><span class="n">noise</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">random_seed</span><span class="p">)</span>
+
+    <span class="c1"># Split into training and validation data sets</span>
+    <span class="n">X_train</span><span class="p">,</span> <span class="n">X_val</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_val</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span>
+        <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">random_seed</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">X_val</span><span class="p">,</span> <span class="n">y_val</span></div>
+
+
+<div class="viewcode-block" id="get_circles_dataset"><a class="viewcode-back" href="../../../../../datasets.html#datasets.get_circles_dataset">[docs]</a><span class="k">def</span> <span class="nf">get_circles_dataset</span><span class="p">(</span>
+    <span class="n">random_seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">],</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int_</span><span class="p">],</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">],</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int_</span><span class="p">]]:</span>
+    <span class="c1"># pylint: disable=line-too-long</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Generate a random dataset with the shape of two circles.</span>
+
+<span class="sd">    This function wraps the `make_circles &lt;https://scikit-learn.org/stable/modules/generated/sklearn.datasets.make_circles&gt;`_</span>
+<span class="sd">    method of ``sklearn.datasets`` with a fixed noise factor of 0.2 and factor of 0.5.</span>
+<span class="sd">    Furthermore, the data is split into training and validation data, where 60% of the</span>
+<span class="sd">    data is training and 40% is validation.</span>
+
+<span class="sd">    Example usage:</span>
+
+<span class="sd">        &gt;&gt;&gt; from tno.quantum.ml.datasets import get_circles_dataset</span>
+<span class="sd">        &gt;&gt;&gt; X_train, y_train, X_val, y_val = get_circles_dataset()</span>
+<span class="sd">        &gt;&gt;&gt; print(f&quot;{X_train.shape=}\n{y_train.shape=}\n{X_val.shape=}\n{y_val.shape=}&quot;)</span>
+<span class="sd">        X_train.shape=(60, 2)</span>
+<span class="sd">        y_train.shape=(60,)</span>
+<span class="sd">        X_val.shape=(40, 2)</span>
+<span class="sd">        y_val.shape=(40,)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        random_seed: Seed to give to the random number generator. Defaults to 0.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A tuple containing ``X_training``, ``y_training``, ``X_validation`` and</span>
+<span class="sd">        ``y_validation`` of a dataset with two circles.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># pylint: enable=line-too-long</span>
+    <span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">datasets</span><span class="o">.</span><span class="n">make_circles</span><span class="p">(</span><span class="n">noise</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">factor</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">random_seed</span><span class="p">)</span>
+
+    <span class="c1"># Split into training and validation data sets</span>
+    <span class="n">X_train</span><span class="p">,</span> <span class="n">X_val</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_val</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span>
+        <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">random_seed</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">X_val</span><span class="p">,</span> <span class="n">y_val</span></div>
+
+
+<div class="viewcode-block" id="get_linearly_separables_dataset"><a class="viewcode-back" href="../../../../../datasets.html#datasets.get_linearly_separables_dataset">[docs]</a><span class="k">def</span> <span class="nf">get_linearly_separables_dataset</span><span class="p">(</span>
+    <span class="n">random_seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">],</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int_</span><span class="p">],</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">],</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int_</span><span class="p">]]:</span>
+    <span class="c1"># pylint: disable=line-too-long</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Generate a random dataset that is linearly separable.</span>
+
+<span class="sd">    This function wraps the `make_classification &lt;https://scikit-learn.org/stable/modules/generated/sklearn.datasets.make_classification&gt;`_</span>
+<span class="sd">    method of ``sklearn.datasets`` with the following fixed arguments:</span>
+<span class="sd">    `n_features=2`, `n_redundant=0`, `n_informative=2` and `n_clusters_per_class=1`.</span>
+<span class="sd">    Afterwards, uniformly distributed noise is added. Lastly, the data is split into</span>
+<span class="sd">    training and validation data, where 60% of the data is training and 40% is</span>
+<span class="sd">    validation.</span>
+
+<span class="sd">    Example usage:</span>
+
+<span class="sd">        &gt;&gt;&gt; from tno.quantum.ml.datasets import get_linearly_separables_dataset</span>
+<span class="sd">        &gt;&gt;&gt; X_train, y_train, X_val, y_val = get_linearly_separables_dataset()</span>
+<span class="sd">        &gt;&gt;&gt; print(f&quot;{X_train.shape=}\n{y_train.shape=}\n{X_val.shape=}\n{y_val.shape=}&quot;)</span>
+<span class="sd">        X_train.shape=(60, 2)</span>
+<span class="sd">        y_train.shape=(60,)</span>
+<span class="sd">        X_val.shape=(40, 2)</span>
+<span class="sd">        y_val.shape=(40,)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        random_seed: Seed to give to the random number generator. Defaults to 0.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A tuple containing ``X_training``, ``y_training``, ``X_validation`` and</span>
+<span class="sd">        ``y_validation`` of a dataset that is linearly separable.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># pylint: enable=line-too-long</span>
+    <span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">datasets</span><span class="o">.</span><span class="n">make_classification</span><span class="p">(</span>
+        <span class="n">n_features</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">n_redundant</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">n_informative</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">random_state</span><span class="o">=</span><span class="n">random_seed</span><span class="p">,</span>
+        <span class="n">n_clusters_per_class</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">rng</span> <span class="o">=</span> <span class="n">RandomState</span><span class="p">(</span><span class="n">random_seed</span><span class="p">)</span>
+    <span class="n">X</span> <span class="o">+=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+    <span class="c1"># Split into training and validation data sets</span>
+    <span class="n">X_train</span><span class="p">,</span> <span class="n">X_val</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_val</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span>
+        <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">random_seed</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">X_val</span><span class="p">,</span> <span class="n">y_val</span></div>
+
+
+<div class="viewcode-block" id="get_blobs_clustering_dataset"><a class="viewcode-back" href="../../../../../datasets.html#datasets.get_blobs_clustering_dataset">[docs]</a><span class="k">def</span> <span class="nf">get_blobs_clustering_dataset</span><span class="p">(</span>
+    <span class="n">n_samples</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">n_features</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">n_centers</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">random_seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">42</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">],</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">]]:</span>
+    <span class="c1"># pylint: disable=line-too-long</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Load a blobs clustering dataset.</span>
+
+<span class="sd">    This function wraps the `make_blobs &lt;https://scikit-learn.org/stable/modules/generated/sklearn.datasets.make_blobs&gt;`_</span>
+<span class="sd">    method of ``sklearn.datasets`` with a fixed cluster standard deviation of 0.1</span>
+
+<span class="sd">    Example usage:</span>
+
+<span class="sd">        &gt;&gt;&gt; from tno.quantum.ml.datasets import get_blobs_clustering_dataset</span>
+<span class="sd">        &gt;&gt;&gt; X, true_labels = get_blobs_clustering_dataset(100, 3, 2)</span>
+<span class="sd">        &gt;&gt;&gt; print(f&quot;{X.shape=}\n{true_labels.shape=}&quot;)</span>
+<span class="sd">        X.shape=(100, 3)</span>
+<span class="sd">        true_labels.shape=(100,)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        n_samples: Number of samples.</span>
+<span class="sd">        n_features: Number of features.</span>
+<span class="sd">        n_centers: Number of centers.</span>
+<span class="sd">        random_seed: Seed to give to the random number generator. Defaults to 42.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A tuple containing ``X`` and ``true_labels`` of a blobs clustering dataset.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># pylint: enable=line-too-long</span>
+    <span class="n">centers</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="p">[[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="p">[(</span><span class="n">f</span> <span class="o">+</span> <span class="n">i</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_features</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_centers</span><span class="p">)]</span>
+    <span class="p">)</span>
+
+    <span class="c1"># pylint: disable-next=unbalanced-tuple-unpacking</span>
+    <span class="n">X</span><span class="p">,</span> <span class="n">true_labels</span> <span class="o">=</span> <span class="n">datasets</span><span class="o">.</span><span class="n">make_blobs</span><span class="p">(</span>
+        <span class="n">n_samples</span><span class="o">=</span><span class="n">n_samples</span><span class="p">,</span> <span class="n">centers</span><span class="o">=</span><span class="n">centers</span><span class="p">,</span> <span class="n">cluster_std</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">random_seed</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">X</span><span class="p">,</span> <span class="n">true_labels</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023-2023, TNO Quantum Code Lab.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
