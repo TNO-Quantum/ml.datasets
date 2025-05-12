@@ -18,5 +18,5 @@ contact:
 repository-code: https://github.com/TNO-Quantum/ml.datasets
 repository-artifact: https://pypi.org/project/tno.quantum.ml.datasets
 title: TNO Quantum - Machine Learning - Datasets
-version: v1.2.1
+version: v2.0.1
 date-released: 2023-02-08
