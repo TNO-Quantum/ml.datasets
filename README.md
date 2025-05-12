@@ -9,7 +9,7 @@ This package is used for testing the ``tno.quantum.ml`` classifiers and clusteri
 
 ## Documentation
 
-Documentation of the `tno.quantum.ml.datasets` package can be found [here](https://tno-quantum.github.io/ml.datasets/).
+Documentation of the `tno.quantum.ml.datasets` package can be found [here](https://tno-quantum.github.io/documentation/).
 
 
 ## Install
